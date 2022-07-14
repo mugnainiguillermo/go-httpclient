@@ -17,14 +17,24 @@ func getGithubClient() gohttp.HttpClient {
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Accept", "application/json")
 
-	client.SetHeaders(commonHeaders)
+	client.SetCommonHeaders(commonHeaders)
 
 	return client
 }
 
 func main() {
+	getUrl(false)
+	getUrl(true)
+	getUrl(true)
+	getUrl(false)
+}
+
+func getUrl(flag bool) {
 	customHeaders := make(http.Header)
-	customHeaders.Set("Accept", "application/xml")
+
+	if flag == true {
+		customHeaders.Set("Accept", "application/xml")
+	}
 
 	response, err := githubClient.Get("https://api.github.com", customHeaders)
 

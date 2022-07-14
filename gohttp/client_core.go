@@ -29,4 +29,6 @@ func (c *httpClient) getRequestHeaders(customHeaders http.Header) http.Header {
 			headers.Set(header, value[0])
 		}
 	}
+
+	return headers
 }

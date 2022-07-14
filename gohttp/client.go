@@ -22,7 +22,7 @@ type HttpClient interface {
 }
 
 func (c *httpClient) SetCommonHeaders(commonHeaders http.Header) {
-	c.CommonHeaders(commonHeaders)
+	c.CommonHeaders = commonHeaders
 }
 
 func (c *httpClient) Get(url string, customHeaders http.Header) (*http.Response, error) {
