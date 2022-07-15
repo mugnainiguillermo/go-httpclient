@@ -1,28 +1,22 @@
 package gohttp
 
-import "net/http"
+import (
+	"net/http"
+	"sync"
+)
 
 type httpClient struct {
-	CommonHeaders http.Header
-}
-
-func New() HttpClient {
-	client := &httpClient{}
-
-	return client
+	builder    *clientBuilder
+	client     *http.Client
+	clientOnce sync.Once
 }
 
 type HttpClient interface {
-	SetCommonHeaders(commonHeaders http.Header)
 	Get(url string, customHeaders http.Header) (*http.Response, error)
 	Post(url string, customHeaders http.Header, body interface{}) (*http.Response, error)
 	Put(url string, customHeaders http.Header, body interface{}) (*http.Response, error)
 	Patch(url string, customHeaders http.Header, body interface{}) (*http.Response, error)
 	Delete(url string, customHeaders http.Header) (*http.Response, error)
-}
-
-func (c *httpClient) SetCommonHeaders(commonHeaders http.Header) {
-	c.CommonHeaders = commonHeaders
 }
 
 func (c *httpClient) Get(url string, customHeaders http.Header) (*http.Response, error) {

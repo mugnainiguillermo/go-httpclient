@@ -5,6 +5,7 @@ import (
 	"github.com/mugnainiguillermo/go-httpclient/gohttp"
 	"io"
 	"net/http"
+	"time"
 )
 
 var (
@@ -12,31 +13,47 @@ var (
 )
 
 func getGithubClient() gohttp.HttpClient {
-	client := gohttp.New()
-
 	commonHeaders := make(http.Header)
 	commonHeaders.Set("Accept", "application/json")
 
-	client.SetCommonHeaders(commonHeaders)
+	client := gohttp.Builder().
+		SetHeaders(commonHeaders).
+		SetMaxIdleConnections(5).
+		SetConnectionTimeout(1 * time.Second).
+		SetResponseTimeout(1 * time.Second).
+		Build()
 
 	return client
 }
 
 func main() {
-	getUrl(false)
-	getUrl(true)
-	getUrl(true)
-	getUrl(false)
+	getUrl()
 }
 
-func getUrl(flag bool) {
+func getUrl() {
 	customHeaders := make(http.Header)
 
-	if flag == true {
-		customHeaders.Set("Accept", "application/xml")
-	}
+	//customHeaders.Set("Accept", "application/xml")
 
 	response, err := githubClient.Get("https://api.github.com", customHeaders)
+
+	if err != nil {
+		panic(err)
+	}
+	fmt.Println(response.StatusCode)
+
+	bytes, _ := io.ReadAll(response.Body)
+
+	fmt.Println(string(bytes))
+}
+
+type User struct {
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+}
+
+func createUser(user User) {
+	response, err := githubClient.Post("https://api.github.com", nil, user)
 
 	if err != nil {
 		panic(err)
