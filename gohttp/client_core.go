@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"io"
 	"net"
 	"net/http"
 	"strings"
@@ -18,7 +19,7 @@ const (
 	defaultResponseTimeout   = 5 * time.Second
 )
 
-func (c *httpClient) do(method string, url string, customHeaders http.Header, body interface{}) (*http.Response, error) {
+func (c *httpClient) do(method string, url string, customHeaders http.Header, body interface{}) (*Response, error) {
 	headers := c.getRequestHeaders(customHeaders)
 
 	requestBody, err := c.getRequestBody(headers.Get("Content-Type"), body)
@@ -35,7 +36,27 @@ func (c *httpClient) do(method string, url string, customHeaders http.Header, bo
 
 	client := c.GetHttpClient()
 
-	return client.Do(request)
+	response, err := client.Do(request)
+
+	if err != nil {
+		return nil, err
+	}
+
+	defer response.Body.Close()
+
+	responseBody, err := io.ReadAll(response.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	finalResponse := Response{
+		status:     response.Status,
+		statusCode: response.StatusCode,
+		headers:    response.Header,
+		body:       responseBody,
+	}
+
+	return &finalResponse, nil
 }
 
 func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byte, error) {
