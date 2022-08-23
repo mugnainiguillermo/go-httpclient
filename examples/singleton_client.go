@@ -20,7 +20,7 @@ func getHttpClient() gohttp.HttpClient {
 		SetMaxIdleConnections(5).
 		SetConnectionTimeout(1 * time.Second).
 		SetResponseTimeout(1 * time.Second).
-		SetUserAgent("Fedes-Computer").
+		SetUserAgent("Guille-Computer").
 		Build()
 
 	return client
