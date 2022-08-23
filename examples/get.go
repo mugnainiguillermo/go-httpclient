@@ -21,7 +21,7 @@ func GetEndpoints() (*Endpoints, error) {
 	fmt.Println(fmt.Sprintf("Body: %s\n", response.String()))
 
 	var endpoints Endpoints
-	if err := response.UnmarshallJson(&endpoints); err != nil {
+	if err := response.UnmarshalJson(&endpoints); err != nil {
 		return nil, err
 	}
 
