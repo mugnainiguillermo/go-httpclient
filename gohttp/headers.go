@@ -34,6 +34,4 @@ func (c *httpClient) getRequestHeaders(customHeaders http.Header) http.Header {
 		headers.Set(gomime.HeaderUserAgent, c.builder.userAgent)
 	}
 	return headers
-
-	return headers
 }

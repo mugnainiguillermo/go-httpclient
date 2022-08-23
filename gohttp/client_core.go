@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"errors"
+	"github.com/mugnainiguillermo/go-httpclient/core"
+	"github.com/mugnainiguillermo/go-httpclient/gohttp_mock"
 	"io"
 	"net"
 	"net/http"
@@ -19,7 +21,7 @@ const (
 	defaultResponseTimeout   = 5 * time.Second
 )
 
-func (c *httpClient) do(method string, url string, customHeaders http.Header, body interface{}) (*Response, error) {
+func (c *httpClient) do(method string, url string, customHeaders http.Header, body interface{}) (*core.Response, error) {
 	headers := c.getRequestHeaders(customHeaders)
 
 	requestBody, err := c.getRequestBody(headers.Get("Content-Type"), body)
@@ -27,7 +29,7 @@ func (c *httpClient) do(method string, url string, customHeaders http.Header, bo
 		return nil, err
 	}
 
-	if mock := mockupServer.GetMock(method, url, string(requestBody)); mock != nil {
+	if mock := gohttp_mock.GetMock(method, url, string(requestBody)); mock != nil {
 		return mock.GetResponse()
 	}
 
@@ -53,11 +55,11 @@ func (c *httpClient) do(method string, url string, customHeaders http.Header, bo
 		return nil, err
 	}
 
-	finalResponse := Response{
-		status:     response.Status,
-		statusCode: response.StatusCode,
-		headers:    response.Header,
-		body:       responseBody,
+	finalResponse := core.Response{
+		Status:     response.Status,
+		StatusCode: response.StatusCode,
+		Headers:    response.Header,
+		Body:       responseBody,
 	}
 
 	return &finalResponse, nil
