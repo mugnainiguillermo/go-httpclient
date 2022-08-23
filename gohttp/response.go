@@ -32,6 +32,6 @@ func (r *Response) String() string {
 	return string(r.body)
 }
 
-func (r *Response) UnmarshallJson(target interface{}) error {
+func (r *Response) UnmarshalJson(target interface{}) error {
 	return json.Unmarshal(r.Bytes(), target)
 }

@@ -27,6 +27,10 @@ func (c *httpClient) do(method string, url string, customHeaders http.Header, bo
 		return nil, err
 	}
 
+	if mock := mockupServer.GetMock(method, url, string(requestBody)); mock != nil {
+		return mock.GetResponse()
+	}
+
 	request, err := http.NewRequest(method, url, bytes.NewBuffer(requestBody))
 	if err != nil {
 		return nil, errors.New("unable to create new request")
@@ -72,24 +76,6 @@ func (c *httpClient) getRequestBody(contentType string, body interface{}) ([]byt
 	default:
 		return json.Marshal(body)
 	}
-}
-
-func (c *httpClient) getRequestHeaders(customHeaders http.Header) http.Header {
-	headers := make(http.Header)
-
-	for header, value := range c.builder.headers {
-		if len(value) > 0 {
-			headers.Set(header, value[0])
-		}
-	}
-
-	for header, value := range customHeaders {
-		if len(value) > 0 {
-			headers.Set(header, value[0])
-		}
-	}
-
-	return headers
 }
 
 func (c *httpClient) GetHttpClient() *http.Client {
