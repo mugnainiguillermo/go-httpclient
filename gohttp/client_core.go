@@ -27,6 +27,10 @@ func (c *httpClient) do(method string, url string, customHeaders http.Header, bo
 		return nil, err
 	}
 
+	if mock := mockupServer.GetMock(method, url, string(requestBody)); mock != nil {
+		return mock.GetResponse()
+	}
+
 	request, err := http.NewRequest(method, url, bytes.NewBuffer(requestBody))
 	if err != nil {
 		return nil, errors.New("unable to create new request")
