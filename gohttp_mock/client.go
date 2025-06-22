@@ -26,7 +26,9 @@ func (c httpClientMock) Do(request *http.Request) (*http.Response, error) {
 	}
 
 	var response = http.Response{}
+	MockupServer.serverMutex.RLock()
 	mock := MockupServer.mocks[MockupServer.getMockKey(request.Method, request.URL.String(), string(body))]
+	MockupServer.serverMutex.RUnlock()
 	if mock != nil {
 		if mock.Error != nil {
 			return nil, mock.Error

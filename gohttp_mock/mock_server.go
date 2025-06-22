@@ -17,7 +17,7 @@ var (
 
 type mockServer struct {
 	enabled     bool
-	serverMutex sync.Mutex
+	serverMutex sync.RWMutex
 
 	httpClient core.HttpClient
 
@@ -39,6 +39,9 @@ func (m *mockServer) Stop() {
 }
 
 func (m *mockServer) IsEnabled() bool {
+	m.serverMutex.RLock()
+	defer m.serverMutex.RUnlock()
+
 	return m.enabled
 }
 
